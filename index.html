@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ComexLab v4.1</title>
+<meta name="theme-color" content="#1f5fa3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ComexLab">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="./comexlab-icon.svg">
+<link rel="apple-touch-icon" href="./comexlab-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#eef4fb;
+  --panel:#ffffff;
+  --panel-2:#f7faff;
+  --ink:#1b2940;
+  --muted:#687385;
+  --line:#dbe5f2;
+  --brand:#1f5fa3;
+  --brand-2:#234274;
+  --brand-soft:#e8f1fb;
+  --ok:#1d9d61;
+  --warn:#c97812;
+  --radius:18px;
+  --shadow:0 18px 40px rgba(25,53,92,.10);
+}
+html,body{height:100%}
+body{
+  font-family:"Syne",system-ui,sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(123,188,248,.25), transparent 26%),
+    linear-gradient(180deg,#f7fbff 0%,var(--bg) 100%);
+  color:var(--ink);
+}
+.main{min-width:0}
+.app{display:grid;grid-template-columns:300px 1fr;min-height:100vh}
+.mobile-topbar,
+.mobile-overlay{display:none}
+.sidebar{
+  background:linear-gradient(180deg,var(--brand-2) 0%,#18345b 100%);
+  color:#fff;
+  padding:24px 18px;
+  border-right:1px solid rgba(255,255,255,.08);
+}
+.brand{padding:8px 10px 18px}
+.brand h1{font-size:28px;font-weight:800}
+.brand p{font-size:11px;letter-spacing:1px;text-transform:uppercase;opacity:.7;margin-top:6px;font-family:"DM Mono",monospace}
+.version{display:inline-block;margin-top:10px;font-size:11px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.10);font-family:"DM Mono",monospace}
+.side-block{margin-top:18px}
+.side-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.58;font-family:"DM Mono",monospace;padding:0 10px 10px}
+.nav-btn,.sub-btn,.utility-btn{
+  width:100%;
+  border:none;
+  background:transparent;
+  color:inherit;
+  text-align:left;
+  cursor:pointer;
+  border-radius:14px;
+  transition:.18s ease;
+}
+.nav-btn,.utility-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 12px;
+  font-size:14px;
+}
+.nav-btn:hover,.utility-btn:hover,.sub-btn:hover{background:rgba(255,255,255,.08)}
+.nav-btn.active,.utility-btn.active{background:rgba(255,255,255,.14)}
+.sub-list{display:none;padding:6px 0 2px 18px}
+.sub-list.open{display:block}
+.sub-btn{
+  color:rgba(255,255,255,.78);
+  padding:10px 12px;
+  font-size:13px;
+}
+.sub-btn.current{color:#fff;background:rgba(255,255,255,.12)}
+.main{padding:26px}
+.screen{display:none}
+.screen.active{display:block}
+.hero{
+  background:linear-gradient(135deg,#234274 0%,#1f5fa3 62%,#63a3e6 100%);
+  color:#fff;
+  border-radius:28px;
+  padding:28px;
+  box-shadow:var(--shadow);
+}
+.hero h2{font-size:40px;line-height:1.02;max-width:10ch}
+.hero p{margin-top:12px;max-width:60ch;line-height:1.7;color:rgba(255,255,255,.84)}
+.hero-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.hero-btn{
+  border:none;border-radius:999px;padding:13px 18px;cursor:pointer;font-weight:700
+}
+.hero-btn.primary{background:#fff;color:var(--brand-2)}
+.hero-btn.secondary{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.18)}
+.section{margin-top:22px}
+.section h3{font-size:18px;margin-bottom:12px}
+.card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:18px;
+  box-shadow:0 10px 25px rgba(36,66,116,.05);
+}
+.card h4{font-size:16px;margin-bottom:8px}
+.card p{font-size:13px;color:var(--muted);line-height:1.65}
+.tag{display:inline-block;margin-top:10px;padding:4px 9px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:11px;font-family:"DM Mono",monospace}
+.db-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:12px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;
+  font-size:12px;
+  font-family:"DM Mono",monospace;
+}
+.startup-card{
+  width:min(760px,100%);
+  background:linear-gradient(180deg,#fff 0%,#f8fbff 100%);
+  border:1px solid var(--line);
+  border-radius:28px;
+  box-shadow:0 30px 70px rgba(16,35,63,.24);
+  padding:28px;
+}
+.startup-card h2{font-size:32px;line-height:1.08}
+.startup-card p{margin-top:12px;color:var(--muted);line-height:1.7}
+.startup-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-top:18px;
+}
+.startup-item{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+}
+.startup-item strong{display:block;font-size:15px}
+.startup-item span{display:block;margin-top:6px;font-size:13px;color:var(--muted);line-height:1.6}
+.startup-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:16px 18px;
+  margin-bottom:16px;
+}
+.mono{font-family:"DM Mono",monospace}
+.lesson-card,.glossary-shell{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+.question{font-size:24px;line-height:1.35;font-weight:700}
+.question-meta{margin-top:10px;color:var(--muted);font-size:13px}
+.options{display:grid;gap:10px;margin-top:18px}
+.opt{
+  width:100%;
+  text-align:left;
+  padding:14px 16px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:var(--panel-2);
+  cursor:pointer;
+  font:inherit;
+  color:var(--ink);
+}
+.opt:hover{border-color:#b8cae2}
+.opt.selected{border-color:var(--brand);background:var(--brand-soft)}
+.opt.correct{border-color:#89d4b2;background:#eefbf4}
+.opt.wrong{border-color:#f2bfba;background:#fff4f3}
+.feedback{
+  display:none;
+  margin-top:16px;
+  padding:16px;
+  border-radius:18px;
+  line-height:1.65;
+}
+.feedback.show{display:block}
+.feedback.ok{background:#eefbf4;border:1px solid #bce9d2}
+.feedback.bad{background:#fff4f3;border:1px solid #f0c7c2}
+.lesson-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.stats-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+.stat-card{
+  background:var(--panel-2);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+}
+.stat-card strong{display:block;font-size:22px}
+.stat-card span{display:block;margin-top:4px;font-size:12px;color:var(--muted)}
+.btn{
+  border:none;
+  border-radius:14px;
+  padding:12px 16px;
+  cursor:pointer;
+  font:inherit;
+  font-weight:700;
+}
+.btn.primary{background:var(--brand);color:#fff}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.search-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.search{
+  flex:1;
+  min-width:220px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:13px 14px;
+  font:inherit;
+}
+.filter{
+  border:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:10px 14px;cursor:pointer
+}
+.filter.active{background:var(--brand-soft);border-color:#b6cbea;color:var(--brand)}
+.terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.term{
+  background:var(--panel-2);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+}
+.term h4{font-size:15px}
+.term p{margin-top:8px;font-size:13px;line-height:1.65;color:var(--muted)}
+.term .ref{display:block;margin-top:10px;font-size:11px;color:var(--brand);font-family:"DM Mono",monospace}
+.empty{padding:24px;color:var(--muted);text-align:center}
+.site-footer{
+  margin-top:22px;
+  padding:18px 10px 6px;
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
+  font-family:"DM Mono",monospace;
+}
+@media (max-width:980px){
+  .app{grid-template-columns:1fr}
+  .mobile-topbar{
+    position:sticky;
+    top:0;
+    z-index:30;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:12px 14px;
+    background:rgba(247,251,255,.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .mobile-topbar-title{font-size:13px;font-family:"DM Mono",monospace;color:var(--muted)}
+  .mobile-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(9,20,38,.38);
+    z-index:25;
+  }
+  body.sidebar-open .mobile-overlay{display:block}
+  .sidebar{
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    width:min(86vw,320px);
+    overflow:auto;
+    z-index:40;
+    transform:translateX(-100%);
+    transition:transform .2s ease;
+    box-shadow:0 20px 60px rgba(14,29,52,.28);
+  }
+  body.sidebar-open .sidebar{transform:translateX(0)}
+  .main{padding:18px 16px 26px}
+  .card-grid,.terms{grid-template-columns:1fr}
+  .startup-list{grid-template-columns:1fr}
+  .hero h2{font-size:32px}
+  .stats-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="mobile-topbar">
+  <button class="btn ghost" id="mobile-menu-btn" type="button">Menú</button>
+  <div class="mobile-topbar-title">ComexLab v4.1</div>
+  <button class="btn ghost" data-nav="home" type="button">Inicio</button>
+</div>
+<div class="mobile-overlay" id="mobile-overlay"></div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>ComexLab</h1>
+      <p>Plataforma profesional de capacitación aduanal</p>
+      <span class="version">v4.1</span>
+    </div>
+
+    <div class="side-block">
+      <div class="side-label">Inicio</div>
+      <button class="utility-btn active" data-nav="home">Dashboard</button>
+    </div>
+
+    <div class="side-block">
+      <div class="side-label">Módulos de estudio</div>
+
+      <button class="nav-btn" data-toggle="leg">
+        <span>Legislación de Comercio Exterior</span>
+        <span>▾</span>
+      </button>
+      <div class="sub-list" id="group-leg">
+        <button class="sub-btn" data-lesson="leg_ley_aduanera">Ley Aduanera</button>
+        <button class="sub-btn" data-lesson="leg_rrna">RRNA</button>
+        <button class="sub-btn" data-lesson="leg_tlc">Tratados</button>
+        <button class="sub-btn" data-lesson="leg_rgce">RGCE 2026</button>
+      </div>
+
+      <button class="nav-btn" data-toggle="arancel">
+        <span>Clasificación Arancelaria</span>
+        <span>▾</span>
+      </button>
+      <div class="sub-list" id="group-arancel">
+        <button class="sub-btn" data-lesson="arancel_sa">Sistema Armonizado</button>
+        <button class="sub-btn" data-lesson="arancel_rgi">RGI 1</button>
+        <button class="sub-btn" data-lesson="arancel_sec16">Sección XVI</button>
+      </div>
+
+      <button class="nav-btn" data-toggle="proc">
+        <span>Procedimientos Aduaneros</span>
+        <span>▾</span>
+      </button>
+      <div class="sub-list" id="group-proc">
+        <button class="sub-btn" data-lesson="proc_calculo">Cálculo de Impuestos</button>
+        <button class="sub-btn" data-lesson="proc_cove">COVE</button>
+        <button class="sub-btn" data-lesson="proc_vucem">VUCEM</button>
+      </div>
+
+      <button class="nav-btn" data-toggle="anti">
+        <span>Ley Antilavado</span>
+        <span>▾</span>
+      </button>
+      <div class="sub-list" id="group-anti">
+        <button class="sub-btn" data-lesson="anti_base">Conceptos</button>
+        <button class="sub-btn" data-lesson="anti_oblig">Obligaciones del AA</button>
+      </div>
+    </div>
+
+    <div class="side-block">
+      <div class="side-label">Herramientas</div>
+      <button class="utility-btn" data-nav="glossary">Glosario Aduanal</button>
+      <button class="utility-btn" data-nav="progress">Mi progreso</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="screen" id="screen-welcome">
+      <div class="startup-card">
+        <div class="mono">AVISO DE VERSIÓN</div>
+        <h2>ComexLab v4.1 sigue en proceso de construcción.</h2>
+        <p>La app ya se puede usar, pero todavía no está terminada. Algunas áreas siguen en integración, limpieza de contenido y ampliación del banco de preguntas. Por ahora, estos módulos y funciones son los que sí están operativos.</p>
+        <div class="startup-list">
+          <div class="startup-item">
+            <strong>Ley Aduanera</strong>
+            <span>Banco activo con integración de preguntas y avance guardado por sesión.</span>
+          </div>
+          <div class="startup-item">
+            <strong>RGCE 2026</strong>
+            <span>Módulo actualmente más robusto dentro de legislación, con base grande ya conectada.</span>
+          </div>
+          <div class="startup-item">
+            <strong>Dashboard y progreso</strong>
+            <span>Ya permiten retomar sesiones, revisar checkpoint y continuar sin perder avance.</span>
+          </div>
+          <div class="startup-item">
+            <strong>Glosario Aduanal</strong>
+            <span>Disponible para consulta mientras seguimos refinando contenido y definiciones.</span>
+          </div>
+        </div>
+        <p>Los demás módulos visibles todavía están en transición: algunos sirven como base, pero aún no tienen todo el banco final conectado.</p>
+        <div class="startup-actions">
+          <button class="btn primary" id="startup-continue-btn" type="button">Entrar a la app</button>
+          <button class="btn ghost" data-nav="progress" type="button">Ver progreso</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-home">
+      <div class="hero">
+        <h2>Una base limpia para volver a construir bien.</h2>
+        <p>Esta versión prioriza que la navegación funcione, que el glosario abra sin trabarse y que las lecciones respondan correctamente. Desde aquí podemos volver a crecer con más banco de preguntas.</p>
+        <div class="db-badge" id="db-badge">DB: cargando…</div>
+        <div class="db-badge" id="session-badge">Checkpoint cada 15 preguntas</div>
+        <div class="hero-row">
+          <button class="hero-btn primary" data-lesson="proc_calculo">Continuar práctica</button>
+          <button class="hero-btn secondary" data-lesson="leg_rgce">Abrir RGCE 2026</button>
+          <button class="hero-btn secondary" data-nav="glossary">Abrir glosario</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Módulos disponibles</h3>
+        <div class="card-grid">
+          <div class="card">
+            <h4>Legislación de Comercio Exterior</h4>
+            <p>Base normativa para despacho aduanero, regulaciones no arancelarias y tratados aplicables.</p>
+            <span class="tag">Ley Aduanera + RGCE 2026</span>
+          </div>
+          <div class="card">
+            <h4>Clasificación Arancelaria</h4>
+            <p>Principios del Sistema Armonizado, RGI y criterios de clasificación de mercancías.</p>
+            <span class="tag">3 lecciones iniciales</span>
+          </div>
+          <div class="card">
+            <h4>Procedimientos Aduaneros</h4>
+            <p>Cálculo de contribuciones, COVE y operación por VUCEM con enfoque práctico.</p>
+            <span class="tag">3 lecciones iniciales</span>
+          </div>
+          <div class="card">
+            <h4>Ley Antilavado</h4>
+            <p>Conceptos básicos y obligaciones preventivas aplicables al agente aduanal.</p>
+            <span class="tag">2 lecciones iniciales</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-progress">
+      <div class="topbar">
+        <div>
+          <div class="mono">PROGRESO</div>
+          <h2>Resumen de avance</h2>
+        </div>
+        <button class="btn ghost" data-nav="home">Volver al dashboard</button>
+      </div>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Lecciones base activas</h4>
+          <p>La app ya está conectada a un banco consolidado, con integración activa del respaldo previo y de los Excel más recientes.</p>
+          <span class="tag">Base consolidada</span>
+        </div>
+        <div class="card">
+          <h4>Glosario integrado</h4>
+          <p>El glosario combina términos locales y entradas recuperadas de ANAM y del respaldo previo.</p>
+          <span class="tag">ANAM + ComexLab</span>
+        </div>
+        <div class="card">
+          <h4>Siguiente objetivo</h4>
+          <p>Expandir el menú para exponer más temas ya integrados y seguir auditando respuestas incorrectas por módulo.</p>
+          <span class="tag">Menú + auditoría</span>
+        </div>
+        <div class="card">
+          <h4>Estado de interfaz</h4>
+          <p>La navegación principal ya quedó separada entre dashboard, progreso y glosario para evitar bloqueos de flujo.</p>
+          <span class="tag">v4.1</span>
+        </div>
+      </div>
+      <div class="section">
+        <h3>Avance guardado</h3>
+        <div class="card-grid" id="progress-cards"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-lesson">
+      <div class="topbar">
+        <div>
+          <div class="mono" id="lesson-breadcrumb">LECCIÓN</div>
+          <h2 id="lesson-title">Título</h2>
+        </div>
+        <div class="lesson-actions">
+          <button class="btn ghost" id="lesson-restart-btn" type="button">Reiniciar</button>
+          <button class="btn ghost" data-nav="home">Volver</button>
+        </div>
+      </div>
+      <div class="lesson-card">
+        <div class="question" id="question-text"></div>
+        <div class="question-meta" id="question-meta"></div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <strong id="lesson-progress-count">0</strong>
+            <span>Respondidas</span>
+          </div>
+          <div class="stat-card">
+            <strong id="lesson-correct-count">0</strong>
+            <span>Correctas</span>
+          </div>
+          <div class="stat-card">
+            <strong id="lesson-remaining-count">0</strong>
+            <span>Restantes</span>
+          </div>
+        </div>
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="lesson-actions">
+          <button class="btn primary" id="next-btn" type="button">Siguiente</button>
+          <button class="btn ghost" data-nav="glossary" type="button">Ir al glosario</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-break">
+      <div class="topbar">
+        <div>
+          <div class="mono" id="break-label">CHECKPOINT</div>
+          <h2 id="break-title">Resumen de avance</h2>
+        </div>
+        <button class="btn ghost" data-nav="home">Ir al dashboard</button>
+      </div>
+      <div class="lesson-card">
+        <div class="stats-row">
+          <div class="stat-card">
+            <strong id="break-answered">0</strong>
+            <span>Respondidas</span>
+          </div>
+          <div class="stat-card">
+            <strong id="break-correct">0</strong>
+            <span>Correctas</span>
+          </div>
+          <div class="stat-card">
+            <strong id="break-accuracy">0%</strong>
+            <span>Precisión</span>
+          </div>
+        </div>
+        <div class="feedback show ok" id="break-message"></div>
+        <div class="lesson-actions">
+          <button class="btn primary" id="break-continue-btn" type="button">Continuar</button>
+          <button class="btn ghost" id="break-rest-btn" type="button">Descansar</button>
+          <button class="btn ghost" id="break-restart-btn" type="button">Reiniciar preguntas</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-glossary">
+      <div class="topbar">
+        <div>
+          <div class="mono">GLOSARIO ADUANAL</div>
+          <h2>ANAM + base ComexLab</h2>
+        </div>
+        <button class="btn ghost" data-nav="home">Volver</button>
+      </div>
+      <div class="glossary-shell">
+        <div class="search-row">
+          <input class="search" id="glossary-search" type="text" placeholder="Buscar término o definición">
+          <button class="filter active" data-filter="all">Todos</button>
+          <button class="filter" data-filter="arancel">Arancelario</button>
+          <button class="filter" data-filter="doc">Documentos</button>
+          <button class="filter" data-filter="op">Operaciones</button>
+          <button class="filter" data-filter="leg">Legal</button>
+          <button class="filter" data-filter="anti">Antilavado</button>
+        </div>
+        <div class="terms" id="glossary-terms"></div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      Copyright 2026. Todos los derechos reservados para ComexLab, una aplicación de FG Global.
+    </footer>
+  </main>
+</div>
+
+<script src="./ComexLab-data.js"></script>
+<script>
+const LESSONS = {
+  leg_ley_aduanera: {
+    module: "Legislación de Comercio Exterior",
+    title: "Ley Aduanera",
+    questions: [
+      {
+        text: "¿Cuál es el objeto principal de la Ley Aduanera?",
+        meta: "Marco general del despacho aduanero",
+        options: [
+          "Regular exclusivamente el cobro de aranceles",
+          "Regular entrada, salida y control de mercancías, así como el despacho aduanero",
+          "Establecer todos los tratados comerciales internacionales",
+          "Normar solo a las agencias navieras"
+        ],
+        correct: 1,
+        explanation: "La Ley Aduanera regula la entrada, salida y control de mercancías del territorio nacional, así como el despacho aduanero y distintos regímenes aplicables.",
+        ref: "Ley Aduanera, art. 1"
+      },
+      {
+        text: "¿Quién puede promover el despacho aduanero por cuenta ajena?",
+        meta: "Representación aduanera",
+        options: [
+          "Cualquier persona con carta poder simple",
+          "El agente aduanal o la agencia aduanal autorizados por la autoridad",
+          "Solo el importador",
+          "Cualquier transportista con CAAT"
+        ],
+        correct: 1,
+        explanation: "Hoy la figura no se limita solo al agente aduanal; también existe la agencia aduanal autorizada. Esa fue una de las respuestas que estaba mal en la versión anterior.",
+        ref: "Ley Aduanera, arts. 40 y 167-D"
+      }
+    ]
+  },
+  leg_rrna: {
+    module: "Legislación de Comercio Exterior",
+    title: "RRNA",
+    questions: [
+      {
+        text: "¿Qué son las Regulaciones y Restricciones No Arancelarias?",
+        meta: "Permisos, NOM y controles",
+        options: [
+          "Aranceles específicos sobre mercancías sensibles",
+          "Medidas distintas a los aranceles que regulan o condicionan importación o exportación",
+          "Tratados comerciales firmados por México",
+          "Multas por errores en pedimento"
+        ],
+        correct: 1,
+        explanation: "Las RRNA incluyen permisos previos, NOM, cupos, certificados sanitarios y otras medidas no arancelarias.",
+        ref: "Ley de Comercio Exterior, art. 17"
+      }
+    ]
+  },
+  leg_tlc: {
+    module: "Legislación de Comercio Exterior",
+    title: "Tratados de Comercio Exterior",
+    questions: [
+      {
+        text: "¿Qué habilita en general un tratado comercial para una mercancía originaria?",
+        meta: "Reglas de origen",
+        options: [
+          "Evitar siempre el pedimento",
+          "Acceder a preferencias arancelarias si cumple con reglas de origen",
+          "Importar sin IVA",
+          "No presentar documentos de valor"
+        ],
+        correct: 1,
+        explanation: "La preferencia no nace solo por venir de un país socio; depende de cumplir con las reglas de origen y acreditarlas correctamente.",
+        ref: "Tratados comerciales y reglas de origen"
+      }
+    ]
+  },
+  leg_rgce: {
+    module: "Legislación de Comercio Exterior",
+    title: "RGCE 2026",
+    questions: [
+      {
+        text: "¿Qué función cumplen en general las RGCE dentro de la operación aduanera?",
+        meta: "Resolución anual de reglas",
+        options: [
+          "Sustituir la Ley Aduanera por completo",
+          "Dar a conocer y ordenar disposiciones de carácter general en materia aduanera y de comercio exterior",
+          "Fijar tasas de IVA e ISR",
+          "Regular únicamente transporte marítimo"
+        ],
+        correct: 1,
+        explanation: "Las RGCE agrupan reglas de carácter general para facilitar el cumplimiento operativo en comercio exterior.",
+        ref: "RGCE"
+      }
+    ]
+  },
+  arancel_sa: {
+    module: "Clasificación Arancelaria",
+    title: "Sistema Armonizado",
+    questions: [
+      {
+        text: "¿En qué año entró en vigor el Sistema Armonizado?",
+        meta: "Antecedentes del SA",
+        options: ["1948", "1975", "1988", "2000"],
+        correct: 2,
+        explanation: "El Sistema Armonizado entró en vigor en 1988 y es la base de la clasificación arancelaria moderna.",
+        ref: "Convenio del SA"
+      }
+    ]
+  },
+  arancel_rgi: {
+    module: "Clasificación Arancelaria",
+    title: "RGI 1",
+    questions: [
+      {
+        text: "¿Cuál es el principio central de la RGI 1?",
+        meta: "Texto legal de partidas y notas",
+        options: [
+          "Clasificar por valor comercial",
+          "Clasificar por uso final",
+          "Clasificar legalmente por textos de partida y notas",
+          "Clasificar por criterio del agente aduanal"
+        ],
+        correct: 2,
+        explanation: "La RGI 1 manda acudir primero al texto de las partidas y a las notas de sección o capítulo.",
+        ref: "RGI 1"
+      }
+    ]
+  },
+  arancel_sec16: {
+    module: "Clasificación Arancelaria",
+    title: "Sección XVI",
+    questions: [
+      {
+        text: "¿Qué comprende principalmente el Capítulo 84 de la Sección XVI?",
+        meta: "Máquinas y aparatos",
+        options: [
+          "Aparatos ópticos",
+          "Máquinas y aparatos mecánicos",
+          "Vehículos automóviles",
+          "Prendas de vestir"
+        ],
+        correct: 1,
+        explanation: "El Capítulo 84 se refiere principalmente a reactores, calderas, máquinas y aparatos mecánicos.",
+        ref: "LIGIE, Sección XVI"
+      }
+    ]
+  },
+  proc_calculo: {
+    module: "Procedimientos Aduaneros",
+    title: "Cálculo de Impuestos",
+    questions: [
+      {
+        text: "¿Cuál es el orden correcto para calcular contribuciones en una importación definitiva típica?",
+        meta: "Base gravable",
+        options: [
+          "IVA, luego IGI, luego DTA",
+          "Valor en aduana, IGI, DTA y después IVA sobre la base integrada",
+          "Solo IVA",
+          "IGI e IVA simultáneamente sobre factura"
+        ],
+        correct: 1,
+        explanation: "Se parte del valor en aduana, después IGI, luego DTA y finalmente el IVA sobre la base que integra esos conceptos.",
+        ref: "Ley Aduanera y LIVA"
+      }
+    ]
+  },
+  proc_cove: {
+    module: "Procedimientos Aduaneros",
+    title: "COVE",
+    questions: [
+      {
+        text: "¿Qué acredita el COVE en el contexto aduanero?",
+        meta: "Documento electrónico",
+        options: [
+          "La patente del agente aduanal",
+          "El valor comercial de las mercancías",
+          "La liberación aduanera",
+          "El pago del IVA"
+        ],
+        correct: 1,
+        explanation: "El COVE es el comprobante electrónico relacionado con el valor comercial de las mercancías y se vincula con el pedimento.",
+        ref: "RGCE 3.1.8"
+      }
+    ]
+  },
+  proc_vucem: {
+    module: "Procedimientos Aduaneros",
+    title: "VUCEM",
+    questions: [
+      {
+        text: "¿Qué es VUCEM?",
+        meta: "Ventanilla Única",
+        options: [
+          "Un banco para pagar contribuciones",
+          "El portal electrónico para trámites y autorizaciones de comercio exterior",
+          "Solo un visor de pedimentos",
+          "Una aduana especial"
+        ],
+        correct: 1,
+        explanation: "VUCEM centraliza permisos, certificados y autorizaciones para operaciones de comercio exterior.",
+        ref: "Decreto VUCEM"
+      }
+    ]
+  },
+  anti_base: {
+    module: "Ley Antilavado",
+    title: "Conceptos",
+    questions: [
+      {
+        text: "¿Qué establece la LFPIORPI principalmente?",
+        meta: "Enfoque preventivo",
+        options: [
+          "Solo sanciones penales",
+          "Obligaciones preventivas para identificar operaciones con recursos de procedencia ilícita",
+          "Aranceles especiales",
+          "Subsidios al comercio exterior"
+        ],
+        correct: 1,
+        explanation: "La LFPIORPI tiene un enfoque preventivo; no sustituye el régimen penal, sino que establece obligaciones para identificar y reportar.",
+        ref: "LFPIORPI"
+      }
+    ]
+  },
+  anti_oblig: {
+    module: "Ley Antilavado",
+    title: "Obligaciones del AA",
+    questions: [
+      {
+        text: "¿Cuál es una obligación clave del sujeto obligado en materia antilavado?",
+        meta: "KYC y avisos",
+        options: [
+          "Evitar cualquier operación internacional",
+          "Integrar expedientes e identificar adecuadamente al cliente",
+          "Cobrar siempre en efectivo",
+          "Eliminar expedientes cada año"
+        ],
+        correct: 1,
+        explanation: "La identificación del cliente y la conservación del expediente son obligaciones troncales del sistema preventivo.",
+        ref: "LFPIORPI"
+      }
+    ]
+  }
+};
+
+const APP_VERSION = "4.1";
+const STORAGE_KEY = "comexlab-progress-v4-1";
+const STARTUP_NOTICE_KEY = "comexlab-startup-notice-v4-1";
+const BREAK_INTERVAL = 15;
+
+const EXTERNAL_LESSON_MAP = {
+  leg_ley_aduanera: "leg_ley_aduanera",
+  leg_rrna: "leg_rrna",
+  leg_tlc: "leg_tlc",
+  leg_rgce: "leg_rgce",
+  arancel_sa: "arancel_sa_antecedentes",
+  arancel_rgi: "arancel_rg1",
+  arancel_sec16: "arancel_sec16",
+  proc_calculo: "proc_calculo_imp",
+  proc_cove: "proc_cove",
+  proc_vucem: "proc_ventanilla",
+  anti_base: "antilavado_antecedentes",
+  anti_oblig: "antilavado_obligaciones_aa"
+};
+
+function cleanMojibake(value) {
+  if (typeof value !== "string") return value;
+
+  return value
+    .replace(/Â¿/g, "¿")
+    .replace(/Â¡/g, "¡")
+    .replace(/Â°/g, "°")
+    .replace(/Âº/g, "º")
+    .replace(/Ã¡/g, "á")
+    .replace(/Ã©/g, "é")
+    .replace(/Ã­/g, "í")
+    .replace(/Ã³/g, "ó")
+    .replace(/Ãº/g, "ú")
+    .replace(/Ã/g, "Á")
+    .replace(/Ã‰/g, "É")
+    .replace(/Ã/g, "Í")
+    .replace(/Ã“/g, "Ó")
+    .replace(/Ãš/g, "Ú")
+    .replace(/Ã±/g, "ñ")
+    .replace(/Ã‘/g, "Ñ")
+    .replace(/Ã¼/g, "ü")
+    .replace(/Ãœ/g, "Ü")
+    .replace(/Ã§/g, "ç")
+    .replace(/Ã“/g, "Ó")
+    .replace(/Ã0/g, "É")
+    .replace(/Ãƒanicamente/g, "Únicamente")
+    .replace(/Ã—|Ã\x14/g, "×")
+    .replace(/â€”|â¬\u001d|â|â–¾/g, "—")
+    .replace(/â€“/g, "–")
+    .replace(/â€¢/g, "•")
+    .replace(/â†’|â \u0019/g, "→")
+    .replace(/â‰¤/g, "≤")
+    .replace(/â‰¥/g, "≥")
+    .replace(/QUESTION BANK — Verified & Corrected/g, "QUESTION BANK - Verified & Corrected")
+    .replace(/�/g, "")
+    .trim();
+}
+
+function normalizeExternalQuestion(item) {
+  return {
+    text: cleanMojibake(item?.text || ""),
+    meta: cleanMojibake(item?.ctx || ""),
+    options: Array.isArray(item?.opts) ? item.opts.map((opt) => cleanMojibake(opt)) : [],
+    correct: Number.isInteger(item?.ok) ? item.ok : 0,
+    explanation: cleanMojibake(item?.exp || ""),
+    ref: cleanMojibake(item?.ref || "")
+  };
+}
+
+function hydrateLessonsFromExternalBank() {
+  if (!window.COMEX_QB || typeof window.COMEX_QB !== "object") return;
+
+  Object.entries(EXTERNAL_LESSON_MAP).forEach(([localKey, externalKey]) => {
+    const questions = Array.isArray(window.COMEX_QB[externalKey])
+      ? window.COMEX_QB[externalKey]
+          .map(normalizeExternalQuestion)
+          .filter((item) => item.text && item.options.length)
+      : [];
+
+    if (questions.length) {
+      LESSONS[localKey] = {
+        ...LESSONS[localKey],
+        questions
+      };
+    }
+  });
+}
+
+hydrateLessonsFromExternalBank();
+
+function updateDatabaseBadge() {
+  const badge = document.getElementById("db-badge");
+  if (!badge) return;
+
+  const qb = window.COMEX_QB && typeof window.COMEX_QB === "object" ? window.COMEX_QB : {};
+  const keys = Object.keys(qb);
+  const total = keys.reduce((sum, key) => sum + (Array.isArray(qb[key]) ? qb[key].length : 0), 0);
+  badge.textContent = `DB v4 | claves: ${keys.length} | preguntas: ${total}`;
+}
+
+updateDatabaseBadge();
+
+const LOCAL_GLOSSARY = [
+  {w:"Aduana",cat:"op",d:"Oficina del Estado encargada de aplicar la legislación relativa a los regímenes aduaneros, verificar restricciones y regulaciones, y asegurar el pago de contribuciones y cuotas compensatorias.",r:"ANAM"},
+  {w:"Agente aduanal",cat:"op",d:"Persona física autorizada mediante patente para promover por cuenta ajena el despacho de mercancías en distintos regímenes aduaneros.",r:"ANAM"},
+  {w:"Apoderado aduanal",cat:"op",d:"Persona física designada para encargarse del despacho de mercancías en nombre o representación de otra persona.",r:"ANAM"},
+  {w:"ANAM",cat:"leg",d:"Agencia Nacional de Aduanas de México.",r:"ANAM"},
+  {w:"Arancel ad-valorem",cat:"arancel",d:"Gravamen expresado como porcentaje fijo del valor del bien importado.",r:"ANAM"},
+  {w:"Arancel específico",cat:"arancel",d:"Gravamen expresado en unidades monetarias por cada unidad de medida del bien importado.",r:"ANAM"},
+  {w:"Arancel mixto",cat:"arancel",d:"Arancel compuesto por uno ad valorem y uno específico aplicados simultáneamente.",r:"ANAM"},
+  {w:"CAAT",cat:"doc",d:"Código Armonizado Alfanumérico de Transportista declarado en pedimentos y asociado al registro de transportistas, vehículos y conductores.",r:"ANAM"},
+  {w:"COVE",cat:"doc",d:"Comprobante de Valor Electrónico vinculado a la operación y al valor comercial de las mercancías.",r:"ComexLab"},
+  {w:"Despacho aduanero",cat:"op",d:"Conjunto de actos y formalidades relativos a la entrada o salida de mercancías del territorio nacional.",r:"ComexLab"},
+  {w:"FIEL",cat:"doc",d:"Firma Electrónica Avanzada.",r:"ANAM"},
+  {w:"IMMEX",cat:"leg",d:"Programa que permite importar temporalmente bienes necesarios para procesos industriales o de servicios destinados a exportación.",r:"ANAM"},
+  {w:"LFPIORPI",cat:"anti",d:"Ley Federal para la Prevención e Identificación de Operaciones con Recursos de Procedencia Ilícita.",r:"ComexLab"},
+  {w:"PROSEC",cat:"leg",d:"Programas de Promoción Sectorial para productores que abastecen mercado externo e interno.",r:"ANAM"},
+  {w:"RGI",cat:"arancel",d:"Reglas Generales de Interpretación empleadas para clasificar mercancías en la nomenclatura arancelaria.",r:"ComexLab"},
+  {w:"RRNA",cat:"leg",d:"Regulaciones y Restricciones No Arancelarias, como permisos, NOM, cupos y certificados.",r:"ComexLab"},
+  {w:"SAAI M3",cat:"op",d:"Sistema Automatizado Aduanero Integral M3.",r:"ANAM"},
+  {w:"SCAAA",cat:"op",d:"Sistema de Control de Agentes y Apoderados Aduanales.",r:"ANAM"},
+  {w:"SICREFIS",cat:"op",d:"Sistema de Control de Recintos Fiscalizados.",r:"ANAM"},
+  {w:"SICOFE",cat:"op",d:"Sistema de Control Ferroviario.",r:"ANAM"},
+  {w:"SICOSEM",cat:"op",d:"Sistema de Consulta y Seguimiento de Muestras.",r:"ANAM"},
+  {w:"SIECA",cat:"op",d:"Sistema de Esclusas para el Control Aduanero.",r:"ANAM"},
+  {w:"SIPAIM",cat:"op",d:"Sistema de Padrón de Importadores.",r:"ANAM"},
+  {w:"SIREM3",cat:"op",d:"Sistema de Reconocimiento M3.",r:"ANAM"},
+  {w:"SOIA",cat:"op",d:"Sistema de Operación Integral Aduanera.",r:"ANAM"},
+  {w:"T-MEC",cat:"leg",d:"Tratado entre México, Estados Unidos y Canadá que otorga preferencias arancelarias sujetas a reglas de origen.",r:"ComexLab"},
+  {w:"Valor en aduana",cat:"doc",d:"Base gravable utilizada para calcular contribuciones, determinada principalmente por el método de valor de transacción.",r:"ComexLab"},
+  {w:"VOCE",cat:"op",d:"Validación de Operaciones de Comercio Exterior.",r:"ANAM"},
+  {w:"VUCEM",cat:"op",d:"Ventanilla Única de Comercio Exterior Mexicano para trámites, permisos y autorizaciones.",r:"ComexLab"}
+];
+
+const GLOSSARY_MAP = new Map();
+
+if (Array.isArray(window.COMEX_GLOS)) {
+  window.COMEX_GLOS.forEach(item => {
+    if (item && item.w) {
+      GLOSSARY_MAP.set(item.w.toLowerCase(), {
+        w: cleanMojibake(item.w),
+        cat: item.cat || "op",
+        d: cleanMojibake(item.d || ""),
+        r: cleanMojibake(item.r || "ComexLab")
+      });
+    }
+  });
+}
+
+LOCAL_GLOSSARY.forEach(item => {
+  if (item && item.w) {
+    GLOSSARY_MAP.set(cleanMojibake(item.w).toLowerCase(), {
+      ...item,
+      w: cleanMojibake(item.w),
+      d: cleanMojibake(item.d),
+      r: cleanMojibake(item.r)
+    });
+  }
+});
+
+const GLOSSARY = [...GLOSSARY_MAP.values()].sort((a,b) => a.w.localeCompare(b.w, "es"));
+
+let currentScreen = "home";
+let currentLessonKey = "";
+let currentQuestionIndex = 0;
+let currentSelection = -1;
+let currentFilter = "all";
+let progressStore = loadProgressStore();
+
+const screenEls = {
+  welcome: document.getElementById("screen-welcome"),
+  home: document.getElementById("screen-home"),
+  progress: document.getElementById("screen-progress"),
+  lesson: document.getElementById("screen-lesson"),
+  break: document.getElementById("screen-break"),
+  glossary: document.getElementById("screen-glossary")
+};
+
+function loadProgressStore() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+  } catch (error) {
+    return {};
+  }
+}
+
+function saveProgressStore() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(progressStore));
+}
+
+function getLessonState(key) {
+  if (!progressStore[key]) {
+    progressStore[key] = {
+      currentQuestionIndex: 0,
+      answers: {},
+      lastBreakAt: 0,
+      completed: false
+    };
+  }
+  return progressStore[key];
+}
+
+function getLessonMetrics(key) {
+  const lesson = LESSONS[key];
+  const state = getLessonState(key);
+  const answers = state.answers || {};
+  const answered = Object.keys(answers).length;
+  const correct = Object.entries(answers).reduce((sum, [index, answer]) => {
+    const question = lesson?.questions?.[Number(index)];
+    return sum + (question && answer === question.correct ? 1 : 0);
+  }, 0);
+  return {
+    answered,
+    correct,
+    remaining: Math.max((lesson?.questions?.length || 0) - answered, 0),
+    accuracy: answered ? Math.round((correct / answered) * 100) : 0
+  };
+}
+
+function resetLessonProgress(key, reopen = true) {
+  progressStore[key] = {
+    currentQuestionIndex: 0,
+    answers: {},
+    lastBreakAt: 0,
+    completed: false
+  };
+  saveProgressStore();
+  renderProgressCards();
+  if (reopen) {
+    loadLesson(key, { forceStart: true });
+  }
+}
+
+function setSidebarOpen(open) {
+  document.body.classList.toggle("sidebar-open", open);
+}
+
+function dismissStartupNotice() {
+  localStorage.setItem(STARTUP_NOTICE_KEY, "seen");
+  showScreen("home");
+}
+
+function getInitialScreen() {
+  const seen = localStorage.getItem(STARTUP_NOTICE_KEY) === "seen";
+  return seen ? "home" : "welcome";
+}
+
+function showScreen(name) {
+  currentScreen = name;
+  document.body.dataset.screen = name;
+  Object.entries(screenEls).forEach(([key, el]) => el.classList.toggle("active", key === name));
+  document.querySelectorAll("[data-nav]").forEach(btn => btn.classList.toggle("active", btn.dataset.nav === name));
+  setSidebarOpen(false);
+  window.scrollTo({ top: 0, behavior: "instant" });
+  if (name === "glossary") renderGlossary();
+  if (name === "home" || name === "progress") renderProgressCards();
+}
+
+function toggleGroup(group) {
+  const el = document.getElementById(`group-${group}`);
+  if (!el) return;
+  el.classList.toggle("open");
+}
+
+function loadLesson(key, options = {}) {
+  const lesson = LESSONS[key];
+  if (!lesson) return;
+  const state = getLessonState(key);
+  currentLessonKey = key;
+  currentQuestionIndex = options.forceStart ? 0 : Math.min(state.currentQuestionIndex || 0, Math.max(lesson.questions.length - 1, 0));
+  document.querySelectorAll(".sub-btn").forEach(btn => btn.classList.toggle("current", btn.dataset.lesson === key));
+  renderQuestion();
+  showScreen("lesson");
+}
+
+function renderQuestion() {
+  const lesson = LESSONS[currentLessonKey];
+  const state = getLessonState(currentLessonKey);
+  const q = lesson.questions[currentQuestionIndex];
+  currentSelection = Number.isInteger(state.answers?.[currentQuestionIndex]) ? state.answers[currentQuestionIndex] : -1;
+  document.getElementById("lesson-breadcrumb").textContent = `${lesson.module} / ${currentQuestionIndex + 1} de ${lesson.questions.length}`;
+  document.getElementById("lesson-title").textContent = lesson.title;
+  document.getElementById("question-text").textContent = q.text;
+  document.getElementById("question-meta").textContent = q.meta || "";
+
+  const optionsEl = document.getElementById("options");
+  optionsEl.innerHTML = "";
+  q.options.forEach((option, index) => {
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.type = "button";
+    btn.textContent = option;
+    btn.addEventListener("click", () => selectOption(index));
+    optionsEl.appendChild(btn);
+  });
+
+  const metrics = getLessonMetrics(currentLessonKey);
+  document.getElementById("lesson-progress-count").textContent = metrics.answered;
+  document.getElementById("lesson-correct-count").textContent = metrics.correct;
+  document.getElementById("lesson-remaining-count").textContent = metrics.remaining;
+
+  const feedback = document.getElementById("feedback");
+  feedback.className = "feedback";
+  feedback.innerHTML = "";
+  document.getElementById("next-btn").textContent = currentQuestionIndex === lesson.questions.length - 1 ? "Finalizar" : "Siguiente";
+
+  if (currentSelection >= 0) {
+    applyAnswerState(currentSelection);
+  }
+}
+
+function selectOption(index) {
+  const state = getLessonState(currentLessonKey);
+  currentSelection = index;
+  state.answers[currentQuestionIndex] = index;
+  state.currentQuestionIndex = currentQuestionIndex;
+  progressStore[currentLessonKey] = state;
+  saveProgressStore();
+  applyAnswerState(index);
+  renderProgressCards();
+}
+
+function applyAnswerState(index) {
+  const lesson = LESSONS[currentLessonKey];
+  const q = lesson.questions[currentQuestionIndex];
+  document.querySelectorAll(".opt").forEach((opt, i) => {
+    opt.classList.remove("selected","correct","wrong");
+    if (i === index) opt.classList.add("selected");
+  });
+  const feedback = document.getElementById("feedback");
+  const correct = index === q.correct;
+  document.querySelectorAll(".opt")[q.correct].classList.add("correct");
+  if (!correct) document.querySelectorAll(".opt")[index].classList.add("wrong");
+  feedback.className = `feedback show ${correct ? "ok" : "bad"}`;
+  feedback.innerHTML = `<strong>${correct ? "Respuesta correcta" : "Respuesta incorrecta"}</strong><br>${q.explanation}<br><span class="mono">${q.ref}</span>`;
+}
+
+function nextQuestion() {
+  const lesson = LESSONS[currentLessonKey];
+  const state = getLessonState(currentLessonKey);
+  if (!lesson) return;
+  if (!Number.isInteger(state.answers?.[currentQuestionIndex])) {
+    const feedback = document.getElementById("feedback");
+    feedback.className = "feedback show bad";
+    feedback.innerHTML = "<strong>Primero responde la pregunta actual.</strong><br>Tu avance se guarda en automático, pero necesitamos una respuesta antes de continuar.";
+    return;
+  }
+
+  const answeredAfterCurrent = currentQuestionIndex + 1;
+  if (answeredAfterCurrent >= lesson.questions.length) {
+    state.completed = true;
+    state.currentQuestionIndex = lesson.questions.length - 1;
+    saveProgressStore();
+    renderProgressCards();
+    renderBreakScreen("complete");
+    return;
+  }
+
+  state.currentQuestionIndex = currentQuestionIndex + 1;
+  saveProgressStore();
+
+  if (answeredAfterCurrent % BREAK_INTERVAL === 0 && answeredAfterCurrent !== state.lastBreakAt) {
+    state.lastBreakAt = answeredAfterCurrent;
+    saveProgressStore();
+    renderProgressCards();
+    renderBreakScreen("checkpoint");
+    return;
+  }
+
+  currentQuestionIndex = state.currentQuestionIndex;
+  renderQuestion();
+}
+
+function renderBreakScreen(mode) {
+  const metrics = getLessonMetrics(currentLessonKey);
+  const lesson = LESSONS[currentLessonKey];
+  document.getElementById("break-label").textContent = mode === "complete" ? "RESULTADO FINAL" : "CHECKPOINT";
+  document.getElementById("break-title").textContent = `${lesson.title} - ${mode === "complete" ? "sesión terminada" : "descanso sugerido"}`;
+  document.getElementById("break-answered").textContent = metrics.answered;
+  document.getElementById("break-correct").textContent = metrics.correct;
+  document.getElementById("break-accuracy").textContent = `${metrics.accuracy}%`;
+  document.getElementById("break-message").innerHTML = mode === "complete"
+    ? `Terminaste esta sesión. Llevas <strong>${metrics.correct}</strong> respuestas correctas de <strong>${metrics.answered}</strong>. Puedes descansar, volver al dashboard o reiniciar la práctica cuando quieras.`
+    : `Llevas <strong>${metrics.answered}</strong> preguntas respondidas. Este checkpoint aparece cada <strong>${BREAK_INTERVAL}</strong> preguntas para que puedas revisar tu avance, descansar o seguir sin perder progreso.`;
+  document.getElementById("break-continue-btn").textContent = mode === "complete" ? "Repasar última pregunta" : "Continuar";
+  showScreen("break");
+}
+
+function renderProgressCards() {
+  const target = document.getElementById("progress-cards");
+  if (!target) return;
+  const lessonKeys = Object.keys(progressStore).filter((key) => LESSONS[key]);
+  if (!lessonKeys.length) {
+    target.innerHTML = `
+      <div class="card">
+        <h4>Sin sesiones guardadas</h4>
+        <p>Todavía no hay avance persistido. En cuanto respondas preguntas, podrás salir y volver sin perder tu progreso.</p>
+        <span class="tag">Guardado automático</span>
+      </div>
+    `;
+    return;
+  }
+
+  target.innerHTML = lessonKeys.map((key) => {
+    const lesson = LESSONS[key];
+    const state = getLessonState(key);
+    const metrics = getLessonMetrics(key);
+    return `
+      <div class="card">
+        <h4>${lesson.title}</h4>
+        <p>${metrics.answered} respondidas, ${metrics.correct} correctas, ${metrics.remaining} restantes.</p>
+        <span class="tag">${state.completed ? "Completada" : "En progreso"}</span>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderGlossary() {
+  const q = document.getElementById("glossary-search").value.toLowerCase().trim();
+  let items = GLOSSARY;
+  if (currentFilter !== "all") items = items.filter(item => item.cat === currentFilter);
+  if (q) items = items.filter(item => item.w.toLowerCase().includes(q) || item.d.toLowerCase().includes(q));
+
+  const target = document.getElementById("glossary-terms");
+  if (!items.length) {
+    target.innerHTML = `<div class="empty">Sin resultados para tu búsqueda.</div>`;
+    return;
+  }
+
+  target.innerHTML = items.map(item => `
+    <article class="term">
+      <h4>${item.w}</h4>
+      <p>${item.d}</p>
+      <span class="ref">Fuente: ${item.r}</span>
+    </article>
+  `).join("");
+}
+
+document.addEventListener("click", (event) => {
+  const nav = event.target.closest("[data-nav]");
+  if (nav) {
+    showScreen(nav.dataset.nav);
+    return;
+  }
+
+  const toggle = event.target.closest("[data-toggle]");
+  if (toggle) {
+    toggleGroup(toggle.dataset.toggle);
+    return;
+  }
+
+  const lesson = event.target.closest("[data-lesson]");
+  if (lesson) {
+    loadLesson(lesson.dataset.lesson);
+  }
+});
+
+document.getElementById("next-btn").addEventListener("click", nextQuestion);
+document.getElementById("lesson-restart-btn").addEventListener("click", () => {
+  if (currentLessonKey) resetLessonProgress(currentLessonKey);
+});
+document.getElementById("break-continue-btn").addEventListener("click", () => {
+  const state = getLessonState(currentLessonKey);
+  currentQuestionIndex = state.currentQuestionIndex;
+  showScreen("lesson");
+  renderQuestion();
+});
+document.getElementById("break-rest-btn").addEventListener("click", () => {
+  showScreen("home");
+});
+document.getElementById("break-restart-btn").addEventListener("click", () => {
+  if (currentLessonKey) resetLessonProgress(currentLessonKey);
+});
+document.getElementById("glossary-search").addEventListener("input", renderGlossary);
+document.getElementById("mobile-menu-btn").addEventListener("click", () => {
+  setSidebarOpen(!document.body.classList.contains("sidebar-open"));
+});
+document.getElementById("mobile-overlay").addEventListener("click", () => {
+  setSidebarOpen(false);
+});
+document.getElementById("startup-continue-btn").addEventListener("click", () => {
+  dismissStartupNotice();
+});
+document.querySelectorAll(".filter").forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentFilter = btn.dataset.filter;
+    document.querySelectorAll(".filter").forEach(item => item.classList.toggle("active", item === btn));
+    renderGlossary();
+  });
+});
+
+toggleGroup("leg");
+document.body.dataset.screen = getInitialScreen();
+renderGlossary();
+renderProgressCards();
+showScreen(getInitialScreen());
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch((error) => {
+      console.warn("Service worker no registrado:", error);
+    });
+  });
+}
+</script>
+</body>
+</html>
