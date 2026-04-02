@@ -3,7 +3,7 @@
   "short_name": "ComexLab",
   "description": "Aplicación de capacitación aduanal de FG Global.",
   "start_url": "/ComexLab/",
-"scope": "/ComexLab/",
+  "scope": "/ComexLab/",
   "display": "standalone",
   "background_color": "#eef4fb",
   "theme_color": "#1f5fa3",
