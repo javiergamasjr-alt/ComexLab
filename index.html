@@ -235,6 +235,7 @@ body{
         <button class="sub-btn" data-lesson="leg_ley_aduanera">Ley Aduanera</button>
         <button class="sub-btn" data-lesson="leg_rrna">RRNA</button>
         <button class="sub-btn" data-lesson="leg_tlc">Tratados</button>
+        <button class="sub-btn" data-lesson="leg_rgce">RGCE 2026</button>
       </div>
 
       <button class="nav-btn" data-toggle="arancel">
@@ -281,6 +282,7 @@ body{
         <p>Esta versión prioriza que la navegación funcione, que el glosario abra sin trabarse y que las lecciones respondan correctamente. Desde aquí podemos volver a crecer con más banco de preguntas.</p>
         <div class="hero-row">
           <button class="hero-btn primary" data-lesson="proc_calculo">Continuar práctica</button>
+          <button class="hero-btn secondary" data-lesson="leg_rgce">Abrir RGCE 2026</button>
           <button class="hero-btn secondary" data-nav="glossary">Abrir glosario</button>
         </div>
       </div>
@@ -291,7 +293,7 @@ body{
           <div class="card">
             <h4>Legislación de Comercio Exterior</h4>
             <p>Base normativa para despacho aduanero, regulaciones no arancelarias y tratados aplicables.</p>
-            <span class="tag">3 lecciones iniciales</span>
+            <span class="tag">Ley Aduanera + RGCE 2026</span>
           </div>
           <div class="card">
             <h4>Clasificación Arancelaria</h4>
@@ -323,8 +325,8 @@ body{
       <div class="card-grid">
         <div class="card">
           <h4>Lecciones base activas</h4>
-          <p>Actualmente tienes una versión limpia y estable con módulos iniciales funcionales para reconstruir el banco de estudio.</p>
-          <span class="tag">Base restablecida</span>
+          <p>La app ya está conectada a un banco consolidado, con integración activa del respaldo previo y de los Excel más recientes.</p>
+          <span class="tag">Base consolidada</span>
         </div>
         <div class="card">
           <h4>Glosario integrado</h4>
@@ -333,8 +335,8 @@ body{
         </div>
         <div class="card">
           <h4>Siguiente objetivo</h4>
-          <p>Reinyectar más preguntas del banco original y auditar respuestas incorrectas por módulo.</p>
-          <span class="tag">Próximo paso</span>
+          <p>Expandir el menú para exponer más temas ya integrados y seguir auditando respuestas incorrectas por módulo.</p>
+          <span class="tag">Menú + auditoría</span>
         </div>
         <div class="card">
           <h4>Estado de interfaz</h4>
@@ -462,6 +464,25 @@ const LESSONS = {
         correct: 1,
         explanation: "La preferencia no nace solo por venir de un país socio; depende de cumplir con las reglas de origen y acreditarlas correctamente.",
         ref: "Tratados comerciales y reglas de origen"
+      }
+    ]
+  },
+  leg_rgce: {
+    module: "Legislación de Comercio Exterior",
+    title: "RGCE 2026",
+    questions: [
+      {
+        text: "¿Qué función cumplen en general las RGCE dentro de la operación aduanera?",
+        meta: "Resolución anual de reglas",
+        options: [
+          "Sustituir la Ley Aduanera por completo",
+          "Dar a conocer y ordenar disposiciones de carácter general en materia aduanera y de comercio exterior",
+          "Fijar tasas de IVA e ISR",
+          "Regular únicamente transporte marítimo"
+        ],
+        correct: 1,
+        explanation: "Las RGCE agrupan reglas de carácter general para facilitar el cumplimiento operativo en comercio exterior.",
+        ref: "RGCE"
       }
     ]
   },
@@ -613,6 +634,53 @@ const LESSONS = {
     ]
   }
 };
+
+const EXTERNAL_LESSON_MAP = {
+  leg_ley_aduanera: "leg_ley_aduanera",
+  leg_rrna: "leg_rrna",
+  leg_tlc: "leg_tlc",
+  leg_rgce: "leg_rgce",
+  arancel_sa: "arancel_sa_antecedentes",
+  arancel_rgi: "arancel_rg1",
+  arancel_sec16: "arancel_sec16",
+  proc_calculo: "proc_calculo_imp",
+  proc_cove: "proc_cove",
+  proc_vucem: "proc_ventanilla",
+  anti_base: "antilavado_antecedentes",
+  anti_oblig: "antilavado_obligaciones_aa"
+};
+
+function normalizeExternalQuestion(item) {
+  return {
+    text: item?.text || "",
+    meta: item?.ctx || "",
+    options: Array.isArray(item?.opts) ? item.opts : [],
+    correct: Number.isInteger(item?.ok) ? item.ok : 0,
+    explanation: item?.exp || "",
+    ref: item?.ref || ""
+  };
+}
+
+function hydrateLessonsFromExternalBank() {
+  if (!window.COMEX_QB || typeof window.COMEX_QB !== "object") return;
+
+  Object.entries(EXTERNAL_LESSON_MAP).forEach(([localKey, externalKey]) => {
+    const questions = Array.isArray(window.COMEX_QB[externalKey])
+      ? window.COMEX_QB[externalKey]
+          .map(normalizeExternalQuestion)
+          .filter((item) => item.text && item.options.length)
+      : [];
+
+    if (questions.length) {
+      LESSONS[localKey] = {
+        ...LESSONS[localKey],
+        questions
+      };
+    }
+  });
+}
+
+hydrateLessonsFromExternalBank();
 
 const LOCAL_GLOSSARY = [
   {w:"Aduana",cat:"op",d:"Oficina del Estado encargada de aplicar la legislación relativa a los regímenes aduaneros, verificar restricciones y regulaciones, y asegurar el pago de contribuciones y cuotas compensatorias.",r:"ANAM"},
