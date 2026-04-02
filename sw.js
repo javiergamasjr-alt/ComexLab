@@ -1,4 +1,4 @@
-const CACHE_NAME = "comexlab-v3";
+const CACHE_NAME = "comexlab-v4";
 const APP_SHELL = [
   "/ComexLab/",
   "/ComexLab/index.html",
@@ -48,4 +48,3 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
-
