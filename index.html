@@ -41,6 +41,7 @@ body{
     linear-gradient(180deg,#f7fbff 0%,var(--bg) 100%);
   color:var(--ink);
 }
+.main{min-width:0}
 .app{display:grid;grid-template-columns:300px 1fr;min-height:100vh}
 .sidebar{
   background:linear-gradient(180deg,var(--brand-2) 0%,#18345b 100%);
@@ -201,6 +202,9 @@ body{
 @media (max-width:980px){
   .app{grid-template-columns:1fr}
   .sidebar{position:sticky;top:0;z-index:5}
+  body[data-screen="lesson"] .sidebar,
+  body[data-screen="glossary"] .sidebar,
+  body[data-screen="progress"] .sidebar{display:none}
   .card-grid,.terms{grid-template-columns:1fr}
   .hero h2{font-size:32px}
 }
@@ -680,8 +684,10 @@ const screenEls = {
 
 function showScreen(name) {
   currentScreen = name;
+  document.body.dataset.screen = name;
   Object.entries(screenEls).forEach(([key, el]) => el.classList.toggle("active", key === name));
   document.querySelectorAll("[data-nav]").forEach(btn => btn.classList.toggle("active", btn.dataset.nav === name));
+  window.scrollTo({ top: 0, behavior: "instant" });
   if (name === "glossary") renderGlossary();
 }
 
@@ -806,6 +812,7 @@ document.querySelectorAll(".filter").forEach(btn => {
 });
 
 toggleGroup("leg");
+document.body.dataset.screen = "home";
 renderGlossary();
 
 if ("serviceWorker" in navigator) {
