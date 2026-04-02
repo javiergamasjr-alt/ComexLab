@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ComexLab v3.1</title>
+<title>ComexLab v4.0</title>
 <meta name="theme-color" content="#1f5fa3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -216,7 +216,7 @@ body{
     <div class="brand">
       <h1>ComexLab</h1>
       <p>Plataforma profesional de capacitación aduanal</p>
-      <span class="version">v3.1 limpia</span>
+      <span class="version">v4.0</span>
     </div>
 
     <div class="side-block">
@@ -341,7 +341,7 @@ body{
         <div class="card">
           <h4>Estado de interfaz</h4>
           <p>La navegación principal ya quedó separada entre dashboard, progreso y glosario para evitar bloqueos de flujo.</p>
-          <span class="tag">v3.0</span>
+          <span class="tag">v4.0</span>
         </div>
       </div>
     </section>
@@ -650,14 +650,52 @@ const EXTERNAL_LESSON_MAP = {
   anti_oblig: "antilavado_obligaciones_aa"
 };
 
+function cleanMojibake(value) {
+  if (typeof value !== "string") return value;
+
+  return value
+    .replace(/Â¿/g, "¿")
+    .replace(/Â¡/g, "¡")
+    .replace(/Â°/g, "°")
+    .replace(/Âº/g, "º")
+    .replace(/Ã¡/g, "á")
+    .replace(/Ã©/g, "é")
+    .replace(/Ã­/g, "í")
+    .replace(/Ã³/g, "ó")
+    .replace(/Ãº/g, "ú")
+    .replace(/Ã/g, "Á")
+    .replace(/Ã‰/g, "É")
+    .replace(/Ã/g, "Í")
+    .replace(/Ã“/g, "Ó")
+    .replace(/Ãš/g, "Ú")
+    .replace(/Ã±/g, "ñ")
+    .replace(/Ã‘/g, "Ñ")
+    .replace(/Ã¼/g, "ü")
+    .replace(/Ãœ/g, "Ü")
+    .replace(/Ã§/g, "ç")
+    .replace(/Ã“/g, "Ó")
+    .replace(/Ã0/g, "É")
+    .replace(/Ãƒanicamente/g, "Únicamente")
+    .replace(/Ã—|Ã\x14/g, "×")
+    .replace(/â€”|â¬\u001d|â|â–¾/g, "—")
+    .replace(/â€“/g, "–")
+    .replace(/â€¢/g, "•")
+    .replace(/â†’|â \u0019/g, "→")
+    .replace(/â‰¤/g, "≤")
+    .replace(/â‰¥/g, "≥")
+    .replace(/QUESTION BANK — Verified & Corrected/g, "QUESTION BANK - Verified & Corrected")
+    .replace(/ /g, "")
+    .trim();
+}
+
 function normalizeExternalQuestion(item) {
   return {
-    text: item?.text || "",
-    meta: item?.ctx || "",
-    options: Array.isArray(item?.opts) ? item.opts : [],
+    text: cleanMojibake(item?.text || ""),
+    meta: cleanMojibake(item?.ctx || ""),
+    options: Array.isArray(item?.opts) ? item.opts.map((opt) => cleanMojibake(opt)) : [],
     correct: Number.isInteger(item?.ok) ? item.ok : 0,
-    explanation: item?.exp || "",
-    ref: item?.ref || ""
+    explanation: cleanMojibake(item?.exp || ""),
+    ref: cleanMojibake(item?.ref || "")
   };
 }
 
@@ -720,10 +758,10 @@ if (Array.isArray(window.COMEX_GLOS)) {
   window.COMEX_GLOS.forEach(item => {
     if (item && item.w) {
       GLOSSARY_MAP.set(item.w.toLowerCase(), {
-        w: item.w,
+        w: cleanMojibake(item.w),
         cat: item.cat || "op",
-        d: item.d || "",
-        r: item.r || "ComexLab"
+        d: cleanMojibake(item.d || ""),
+        r: cleanMojibake(item.r || "ComexLab")
       });
     }
   });
@@ -731,7 +769,12 @@ if (Array.isArray(window.COMEX_GLOS)) {
 
 LOCAL_GLOSSARY.forEach(item => {
   if (item && item.w) {
-    GLOSSARY_MAP.set(item.w.toLowerCase(), item);
+    GLOSSARY_MAP.set(cleanMojibake(item.w).toLowerCase(), {
+      ...item,
+      w: cleanMojibake(item.w),
+      d: cleanMojibake(item.d),
+      r: cleanMojibake(item.r)
+    });
   }
 });
 
