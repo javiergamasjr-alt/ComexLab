@@ -111,6 +111,19 @@ body{
 .card h4{font-size:16px;margin-bottom:8px}
 .card p{font-size:13px;color:var(--muted);line-height:1.65}
 .tag{display:inline-block;margin-top:10px;padding:4px 9px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:11px;font-family:"DM Mono",monospace}
+.db-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:12px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;
+  font-size:12px;
+  font-family:"DM Mono",monospace;
+}
 .topbar{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   background:rgba(255,255,255,.82);
@@ -280,6 +293,7 @@ body{
       <div class="hero">
         <h2>Una base limpia para volver a construir bien.</h2>
         <p>Esta versión prioriza que la navegación funcione, que el glosario abra sin trabarse y que las lecciones respondan correctamente. Desde aquí podemos volver a crecer con más banco de preguntas.</p>
+        <div class="db-badge" id="db-badge">DB: cargando…</div>
         <div class="hero-row">
           <button class="hero-btn primary" data-lesson="proc_calculo">Continuar práctica</button>
           <button class="hero-btn secondary" data-lesson="leg_rgce">Abrir RGCE 2026</button>
@@ -719,6 +733,18 @@ function hydrateLessonsFromExternalBank() {
 }
 
 hydrateLessonsFromExternalBank();
+
+function updateDatabaseBadge() {
+  const badge = document.getElementById("db-badge");
+  if (!badge) return;
+
+  const qb = window.COMEX_QB && typeof window.COMEX_QB === "object" ? window.COMEX_QB : {};
+  const keys = Object.keys(qb);
+  const total = keys.reduce((sum, key) => sum + (Array.isArray(qb[key]) ? qb[key].length : 0), 0);
+  badge.textContent = `DB v4 | claves: ${keys.length} | preguntas: ${total}`;
+}
+
+updateDatabaseBadge();
 
 const LOCAL_GLOSSARY = [
   {w:"Aduana",cat:"op",d:"Oficina del Estado encargada de aplicar la legislación relativa a los regímenes aduaneros, verificar restricciones y regulaciones, y asegurar el pago de contribuciones y cuotas compensatorias.",r:"ANAM"},
