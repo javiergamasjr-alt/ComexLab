@@ -1,10 +1,10 @@
-const CACHE_NAME = "comexlab-v1";
+const CACHE_NAME = "comexlab-v2";
 const APP_SHELL = [
-  "./",
-  "./ComexLab.html",
-  "./ComexLab-data.js",
-  "./manifest.webmanifest",
-  "./comexlab-icon.svg"
+  "/ComexLab/",
+  "/ComexLab/index.html",
+  "/ComexLab/ComexLab-data.js",
+  "/ComexLab/manifest.webmanifest",
+  "/ComexLab/comexlab-icon.svg"
 ];
 
 self.addEventListener("install", (event) => {
@@ -44,7 +44,10 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
           return response;
         })
-        .catch(() => caches.match("./ComexLab.html"));
+        .catch(() => caches.match("/ComexLab/index.html"));
+    })
+  );
+});
     })
   );
 });
